@@ -1,0 +1,77 @@
+<script>
+  getMessages();
+  const element = document.getElementById("listOfMessages");
+  element.scrollIntoView();
+  element.scrollIntoView({ behavior: "smooth" });
+
+  async function sendMessage(e) {
+    e.preventDefault();
+    let name = document.getElementById("name").value;
+    let text = document.getElementById("text").value;
+    await fetch("/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, text }),
+    }).then((data) => {
+      getMessages();
+      return data.json();
+    });
+  }
+
+  async function getMessages() {
+    arrOfMessages = await fetch("/chat").then((data) => {
+      return data.json();
+    });
+    console.log("arrOfMessages", arrOfMessages);
+    document.getElementById("listOfMessages").innerHTML = arrOfMessages.reduce(
+      (accumulator, item) => {
+        return (accumulator += `<div>${item.name}</div>`);
+      },
+      " "
+    );
+    console.log(authorString);
+  }
+</script>
+
+<div style="border: 4mm ridge rgba(211, 220, 50, 0.6)">
+  <form onsubmit="sendMessage(event)">
+    <div
+      id="listOfMessages"
+      style="
+        max-height: 200px;
+        overflow-y: scroll;
+        margin: 20px;
+        border: 2px solid black;
+      "
+    ></div>
+
+    <label>Login</label>
+    <input type="text" name="name" id="name" value="value" />
+
+    <label>Message</label>
+    <input type="text" name="name" id="text" value="value" />
+
+    <button type="submit">Sent</button>
+    
+  </form>
+
+
+  <div>
+    Куда лить: <input type='text' id='upload' value='/upload'/><br/>
+    <input type='file' id='file' />
+    <a href='#' id='url'></a>
+    <img id="img" />
+    <script>
+        file.onchange = async () => {
+          console.log('img.src',img.src)
+          img.src = url.innerHTML = url.href = "/" + await (await fetch(upload.value, {
+            method: "POST",
+            body: file.files[0]
+          })).text()
+          console.log(img.src)
+        }
+    </script>
+  </div>
+</div>
